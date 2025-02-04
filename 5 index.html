@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>San Valentín</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(45deg, #ffb6c1, #ff69b4); /* Gradiente de colores rosados */
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .heart-animation {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: heart-float 10s infinite;
+        }
+
+        @keyframes heart-float {
+            0% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+            50% {
+                transform: translate(-50%, -80%) rotate(360deg);
+            }
+            100% {
+                transform: translate(-50%, -50%) rotate(0deg);
+            }
+        }
+
+        .card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 300px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .heart {
+            font-size: 3rem;
+            color: #d63384;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            color: #d63384;
+            margin: 15px 0;
+        }
+
+        .btn {
+            background-color: #d63384;
+            color: white;
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            margin: 5px;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #b31c6d;
+        }
+
+        .yes {
+            font-size: 1.2rem;
+            position: relative;
+            z-index: 3;
+        }
+
+        .no {
+            position: absolute;
+            transition: transform 0.3s ease-in-out, left 0.3s ease-in-out, top 0.3s ease-in-out;
+        }
+
+        #mensaje {
+            display: none;
+            font-size: 1.5rem;
+            color: #d63384;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        /* Animación de corazones flotantes al hacer clic en "Sí" */
+        .hearts {
+            position: absolute;
+            top: 30%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+            animation: hearts-fall 2s ease-in-out forwards;
+        }
+
+        @keyframes hearts-fall {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(300px);
+            }
+        }
+
+        .floating-heart {
+            font-size: 2rem;
+            color: #d63384;
+            position: absolute;
+            animation: heart-swing 1.5s ease-in-out infinite;
+        }
+
+        @keyframes heart-swing {
+            0%, 100% {
+                transform: rotate(0deg);
+            }
+            50% {
+                transform: rotate(15deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="heart-animation">💘</div> <!-- Corazón animado en el fondo -->
+
+    <div class="card">
+        <div class="heart">💘</div>
+        <h2>Dafne Poblete, ¿quiere ser mi San Valentín? 💘🌷</h2>
+        <button class="btn yes" id="yesBtn">¡Sí! 💘</button>
+        <button class="btn no" id="noBtn">No</button>
+        <p id="mensaje">💖 ¡Sabía que diría que sí! TE AMO NANE 💘</p>
+    </div>
+
+    <script>
+        let frasesNo = [
+            "¿Está segura?",
+            "Por favor 🥺",
+            "¿Muy muy segura?",
+            "Diga que sí 😭",
+            "¡Última oportunidad!",
+            "Me romperá el corazón 💔",
+            "Piense bien su respuesta 🧐",
+            "La pasaremos bien 😔"
+        ];
+        let indexFrase = 0;
+        let yesBtn = document.getElementById("yesBtn");
+        let noBtn = document.getElementById("noBtn");
+
+        function moverNo(event) {
+            let rect = noBtn.getBoundingClientRect();
+            let distanciaX = Math.abs(event.clientX - (rect.left + rect.width / 2));
+            let distanciaY = Math.abs(event.clientY - (rect.top + rect.height / 2));
+
+            // Solo se mueve si el cursor está demasiado cerca (50px de distancia)
+            if (distanciaX < 50 && distanciaY < 50) {
+                let x = Math.random() * (window.innerWidth - 150);
+                let y = Math.random() * (window.innerHeight - 100);
+
+                noBtn.style.transform = `translate(${x - rect.left}px, ${y - rect.top}px)`;
+
+                // Cambia la frase del botón "No"
+                noBtn.innerText = frasesNo[indexFrase];
+                indexFrase = (indexFrase + 1) % frasesNo.length;
+
+                // Hace más grande el botón de "Sí"
+                let currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
+                yesBtn.style.fontSize = (currentSize + 5) + "px";
+                yesBtn.style.padding = "15px 30px";
+            }
+        }
+
+        noBtn.addEventListener("mousemove", moverNo);
+
+        yesBtn.addEventListener("click", function() {
+            let mensaje = document.getElementById("mensaje");
+            mensaje.style.display = "block";
+            yesBtn.style.display = "none";
+            noBtn.style.display = "none";
+
+            // Ocultar el corazón y el texto
+            document.querySelector(".heart").style.display = "none";
+            document.querySelector("h2").style.display = "none";
+
+            // Crear corazones animados al hacer clic en "Sí"
+            let heartsContainer = document.createElement("div");
+            heartsContainer.classList.add("hearts");
+
+            for (let i = 0; i < 10; i++) {
+                let heart = document.createElement("span");
+                heart.classList.add("floating-heart");
+                heart.style.left = `${Math.random() * 100}%`;
+                heart.style.animationDelay = `${Math.random() * 2}s`;
+                heart.innerHTML = "💘";
+                heartsContainer.appendChild(heart);
+            }
+
+            document.body.appendChild(heartsContainer);
+        });
+    </script>
+</body>
+</html>
